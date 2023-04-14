@@ -1,0 +1,183 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm]
+"DisablePreemption"=dword:00000001
+"DisableCudaContextPreemption"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Scheduler]
+"EnablePreemption"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm]
+"DisableWriteCombining"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\GpuEnergyDrv]
+"Start"=dword:00000004
+
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", AllowNT5DeviceSwap, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", AppProfileAdvanced, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", CinematicPageState, %REG_DWORD%, 0x000000ff
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", Coolbits, %REG_DWORD%, 3
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", DisableApplyColorsAtStartup, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", DisableCPUInfo, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", KeystoneEnable, %REG_DWORD%, 1
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak", MXMThermalControl, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NoMenus, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NoPages, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplAllowForceDVIAsHDTV, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplAllowForceTVDetection, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplDisableRefreshRatePage, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplDualviewMoveDesktopIcons, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableActiveApp, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableActiveClocking, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableAdditionalInfoPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableAGPSettingsPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableAppProfilePage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnableDesktopOverlapPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableFanControl, %REG_DWORD%, 3
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnableHardwarePage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnableMultiGPUConfigurationPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnablenForcePage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableOGLAccel, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnableOglStereoPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplEnableScreenMenuPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplEnableTroubleshootingPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplExposeWin2kDualView, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplForceShowTvVideoOutputFormats, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplHotPlugAware, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplIgnoreOSRotationLimitation, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplOverscanShift, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplShowEnableVMR, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplThermalSettings, %REG_DWORD%, 0x00000020
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", nVCplTvLocaleAutoDetect, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", NVCplXMLFileChecksum, %REG_DWORD%, 0xc7aa91d7
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", OverlayPageState, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", PowermizerPreferences, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", PowerUser, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", PromptDetectDisplays, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", QTwkEnableModeChangeWarning, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", ShowCustomModes, %REG_DWORD%, 1
+HKLM,"Software\NVIDIA Corporation\Global\NVTweak", SilentModeControl, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", T5RestrictSelectedTVFormat, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", TwinViewCapsOverride, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplAllowAllModesForPanning, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplAllowMSRotation, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplAllowSBIOSDevicePairUpdate, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplCustomResConfig, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableDriverSavedModes, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableFrameSyncPage, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableOglStereoPage, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisablePerfQualPage, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisablePrimarySelection, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableRotateAngles, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableSmartDimmerPage, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableSpanControls, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDisableTvVideoOutputFormats, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDontShowAAPerfChk, %REG_DWORD%, 
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDontShowAnisoPerfChk, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplDualViewAllowNonDFPAsPrimary, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableActiveAppProfilePage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableAdvancedTimingPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableClearViewPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableMonitorNativeRotate, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableMultiChipConfigurationPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableMultiTVWarning, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableOverlaySpanControl, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnablePwrMzrOnDesktopMenu, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableRotationColorSettings, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableSysPerfPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplEnableTemperatureSettings, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplForceDFPToEvaluateAsLVDS, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplForceMonitorReEnum, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplNVThermPage, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplReduceOrphanedDualViewDisplays, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\NVTweak", vCplResolutionMenu, %REG_DWORD%, 0
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\OpenGL"
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\OpenGL\Debug", ShaderObjects, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", EnableWin2KDualview, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseALiCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseAMDCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseIntelCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseMicronCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UsenVIDIACompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseRCCCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseULiCompat, %REG_DWORD%, 1
+HKLM,"SOFTWARE\NVIDIA Corporation\Global\System", UseVIACompat, %REG_DWORD%, 1
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power]
+"ExitLatency"=dword:00000001
+"ExitLatencyCheckEnabled"=dword:00000001
+"Latency"=dword:00000001
+"LatencyToleranceDefault"=dword:00000001
+"LatencyToleranceFSVP"=dword:00000001
+"LatencyTolerancePerfOverride"=dword:00000001
+"LatencyToleranceScreenOffIR"=dword:00000001
+"LatencyToleranceVSyncEnabled"=dword:00000001
+"RtlCapabilityCheckLatency"=dword:00000001
+"QosManagesIdleProcessors"=dword:00000000
+"DisableVsyncLatencyUpdate"=dword:00000000
+"DisableSensorWatchdog"=dword:00000001
+"CoalescingTimerInterval"=dword:00000000
+"InterruptSteeringDisabled"=dword:00000001
+"LowLatencyScalingPercentage"=dword:00000064
+"HighPerformance"=dword:00000001
+"HighestPerformance"=dword:00000001
+"MinimumThrottlePercent"=dword:00000000
+"MaximumThrottlePercent"=dword:00000000
+"MaximumPerformancePercent"=dword:00000064
+"InitialUnparkCount"=dword:00000064
+"DefaultD3TransitionLatencyActivelyUsed"=dword:00000000
+"DefaultD3TransitionLatencyIdleLongTime"=dword:00000001
+"DefaultD3TransitionLatencyIdleMonitorOff"=dword:00000001
+"DefaultD3TransitionLatencyIdleNoContext"=dword:00000001
+"DefaultD3TransitionLatencyIdleShortTime"=dword:00000001
+"DefaultD3TransitionLatencyIdleVeryLongTime"=dword:00000001
+"DefaultLatencyToleranceIdle0"=dword:00000001
+"DefaultLatencyToleranceIdle0MonitorOff"=dword:00000001
+"DefaultLatencyToleranceIdle1"=dword:00000001
+"DefaultLatencyToleranceIdle1MonitorOff"=dword:00000001
+"DefaultLatencyToleranceMemory"=dword:00000001
+"DefaultLatencyToleranceNoContext"=dword:00000001
+"DefaultLatencyToleranceNoContextMonitorOff"=dword:00000001
+"DefaultLatencyToleranceOther"=dword:00000001
+"DefaultLatencyToleranceTimerPeriod"=dword:00000001
+"DefaultMemoryRefreshLatencyToleranceActivelyUsed"=dword:00000001
+"DefaultMemoryRefreshLatencyToleranceMonitorOff"=dword:00000001
+"DefaultMemoryRefreshLatencyToleranceNoContext"=dword:00000001
+"Latency"=dword:00000001
+"MaxIAverageGraphicsLatencyInOneBucket"=dword:00000001
+"MiracastPerfTrackGraphicsLatency"=dword:00000001
+"MonitorLatencyTolerance"=dword:00000001
+"MonitorRefreshLatencyTolerance"=dword:00000001
+"TransitionLatency"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}\0000]"
+"Acceleration.Level"=dword:00000000
+"DesktopStereoShortcuts"=dword:00000000
+"FeatureControl"=dword:00000004
+"NVDeviceSupportKFilter"=dword:00000000
+"RmCacheLoc"=dword:00000000
+"RmDisableInst2Sys"=dword:00000000
+"RmFbsrPagedDMA"=dword:00000001
+"RMGpuId"=dword:00000100
+"RmProfilingAdminOnly"=dword:00000000
+"TCCSupported"=dword:00000000
+"TrackResetEngine"=dword:00000000
+"UseBestResolution"=dword:00000001
+"ValidateBlitSubRects"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\Scheduler]
+"EnablePreemption"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers
+"PlatformSupportMiracast"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm]
+"RMPcieLinkSpeed"=dword:00000004
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS]
+"EnableRID61684"=dword:00000001
+
+
+
+
+

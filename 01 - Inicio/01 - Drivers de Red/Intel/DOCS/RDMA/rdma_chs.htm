@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN" xml:lang="zh-CN">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="Resources/Stylesheets/TableStyles/Basic.css" rel="stylesheet" /><title>RDMA（远程直接内存访问）</title>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <h1><a name="RDMA"></a>面向英特尔&reg; 以太网设备的远程直接内存访问 (RDMA)</h1>
+        <p>远程直接内存访问（RDMA）允许网络设备与另一台系统的应用程序内存之间直接传送数据，并在某些网络环境中增加吞吐量和降低延迟。</p>
+        <ul>
+            <li value="1">英特尔&reg; 以太网 800 系列设备支持 iWARP 和 RoCEv2。</li>
+            <li value="2">英特尔&reg; 以太网 X722 系列设备仅支持 iWARP。</li>
+        </ul>
+        <p>主要的区别是 iWARP 通过 TCP 执行 RDMA，而 RoCEv2 则使用 UDP。</p>
+        <p>为了避免因丢弃的数据包导致的性能下降，在所有网络接口和交换机上启用链路级流量控制或优先级流量控制。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注意：</b></p>
+                    <ul>
+                        <li value="1">在运行 Microsoft* Windows Server* 操作系统的系统上，启用 *QoS/优先级流控制将禁用链路级别流控制。</li>
+                        <li value="2">基于英特尔&reg; 以太网 800 系列的设备以超过 4 个端口的多端口模式操作时不支持 RDMA。</li>
+                        <li value="3">在 Linux* 系统上，RDMA 与绑定不兼容。如果启用了 RDMA，结合将不工作。</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <h2>Linux 上的 RDMA</h2>
+        <p>这些基本 Linux RDMA 安装说明适用于以下设备：</p>
+        <ul>
+            <li value="1">英特尔&reg; 以太网 800 系列</li>
+            <li value="2">英特尔&reg; 以太网 X722 系列</li>
+        </ul>
+        <p>有关详细的安装和配置信息，请参阅支持 RDMA 的英特尔以太网设备的驱动程序压缩包内的 Linux RDMA 驱动程序 README 文件。</p>
+        <p>此示例专门针对 Red Hat* Enterprise Linux*。您的操作系统的具体情况可能有所不同。</p>
+        <ol>
+            <li value="1">解压 RDMA 驱动程序压缩包。例如：<br /><code>&num; tar zxf irdma-&lt;x.x.x&gt;.tar.gz</code></li>
+            <li value="2">安装 RDMA PF 驱动程序。例如：<br /><code>&num; cd irdma-&lt;x.x.x&gt;<br />&num; ./build.sh<br />&num; modprobe irdma</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注意：</b>默认情况下，irdma 驱动程序在 iWARP 模式下加载。它使用 devlink 接口来启用每个端口的 RoCev2。要在 RoCEv2 模式下加载所有的 irdma 端口，请使用以下方法：<br /><code>&num; modprobe irdma</code></td></tr></table></li>
+            <li value="3">卸载任何先前安装的 rdma-core 版本。<br /><code>&num; yum erase rdma-core</code></li>
+            <li value="4">从 GitHub 下载 rdma-core 库压缩包。例如：<br /><code>&num; wget https://github.com/linux-rdma/rdma-core/releases/download/v27.0/rdma-core-27.0.tar.gz</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注意：</b>请下载与驱动器附带的 libirdma 补丁文件相匹配的 rdma-core 版本。例如，<code>libirdma-27.0.patch</code> 要求 <code>rdma-core-27.0.tar.gz</code>。</td></tr></table></li>
+            <li value="5">解压 rdma-core 压缩包，应用补丁程序，并更改 spec 文件的组别。例如：<br /><code>&num; tar -xzvf rdma-core-&lt;version&gt;.tar.gz<br />&num; cd rdma-core-&lt;version&gt;<br />&num; patch -p2 &lt;&lt;path-to-component-build&gt;/libirdma-&lt;version&gt;.patch<br />&num; cd ..<br />&num; chgrp -R root &lt;path-to-rdma-core&gt;/redhat<br />&num; tar -zcvf rdma-core-&lt;version&gt;.tgz rdma-core-&lt;version&gt;</code></li>
+            <li value="6">安装 rdma-core-intel 用户空间库。例如：<br /><code>&num; mkdir -p ~/rpmbuild/SOURCES<br />&num; mkdir -p ~/rpmbuild/SPECS<br />&num; cp rdma-core-&lt;version&gt;.tgz ~/rpmbuild/SOURCES/<br />&num; cd ~/rpmbuild/SOURCES<br />&num; tar -xzvf rdma-core-&lt;version&gt;.tgz<br />&num; cp ~/rpmbuild/SOURCES/rdma-core-&lt;version&gt;/redhat/rdma-core.spec ~/rpmbuild/SPECS/<br />&num; cd ~/rpmbuild/SPECS/<br />&num; rpmbuild -ba rdma-core.spec<br />&num; cd ~/rpmbuild/RPMS/x86_64<br />&num; yum install *&lt;version&gt;*.rpm</code></li>
+            <li value="7">在您的适配器上启用流量控制。您可以启用链路级或优先级流量控制；我们建议使用优先级流量控制。有关流量控制的详细信息，请参阅 Linux RDMA 驱动程序 README。<br /></li>
+            <li value="8">在您的系统与之连接的交换机上启用流量控制。查阅交换器文档以了解详细信息。</li>
+        </ol>
+        <h3>面向 Linux 中虚拟环境的 RDMA</h3>
+        <p>基于英特尔以太网 800 系列的设备，在受支持的 Windows 或 Linux 主机上支持 Linux VF 下的 RDMA。有关如何在 Linux VF 中加载和配置 RDMA 的更多信息，请参阅 Linux RDMA 驱动程序压缩包中的自述文件。</p>
+        <div>
+            <h2>FreeBSD* 上的 RDMA</h2>
+            <p>提供适用于以下设备系列的 FreeBSD RDMA 驱动程序：</p>
+            <table style="border-left-style: solid; border-left-width: 1px; border-left-color: black; border-right-style: solid; border-right-width: 1px; border-right-color: black; border-top-style: solid; border-top-width: 1px; border-top-color: black; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: black;" class="TableStyle-Basic" cellspacing="0">
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <tbody>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">设备</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">基础驱动程序名称</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">RDMA 驱动程序名称</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyD-Column1-Body1">支持的协议</th>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">英特尔&reg; 以太网 800 系列</td>
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">ice</td>
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">irdma</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">RoCEv2, iWARP</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">英特尔&reg; 以太网 X722 系列</td>
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">ixl</td>
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">iw_ixl</td>
+                        <td class="TableStyle-Basic-BodyA-Column1-Body1">iWARP</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>以下说明描述了每个设备系列的基本 FreeBSD RDMA 安装。有关详细的安装和配置信息，请参阅 FreeBSD RDMA 驱动程序 tarball 中的 README 文件。</p>
+            <p style="font-weight: bold;">英特尔&reg; 以太网 800 系列：</p>
+            <ol>
+                <li value="1">解压基础驱动程序和 RDMA 驱动程序压缩包。例如：<code><br />&num; tar -xf ice-&lt;version&gt;.tar.gz<br />&num; tar -xf irdma-&lt;version&gt;.tar.gz</code></li>
+                <li value="2">安装基础驱动程序。例如：<br /><code>&num; cd ice-&lt;version&gt;/ directory<br />&num; make<br />&num; make install</code></li>
+                <li value="3">安装 RDMA 驱动程序。例如：<br /><code>&num; cd irdma-&lt;version&gt;/src<br />&num; make clean<br />&num; make ICE_DIR=$PATH_TO_ICE/ice-&lt;version&gt;/<br />&num; make install</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注意：</b>默认情况下，irdma 驱动程序在 iWARP 模式下加载。若要以 RoCEv2 模式加载 irdma 端口，请将下列行添加到 <code>/boot/loader.conf</code>，其中 <code>&lt;port&gt;</code> 是用于启用 RoCEv2 模式的接口，然后重新启动：<br /><code>dev.irdma&lt;port&gt;.roce_enable=1</code><br />例如，要在 ice1 上启用 RoCEv2 模式：<br /><code>dev.irdma1.roce_enable=1</code></td></tr></table></li>
+                <li value="4">启用流量控制。<br /><code>&num; sysctl dev.ice.&lt;interface_num&gt;.fc=3</code></li>
+                <li value="5">在您的系统与之连接的交换机上启用流量控制。查阅交换器文档以了解详细信息。</li>
+            </ol>
+            <p style="font-weight: bold;">英特尔&reg; 以太网 X722 系列：</p>
+            <ol>
+                <li value="1">解压基础驱动程序和 RDMA 驱动程序压缩包。例如：<code><br />&num; tar -xf ixl-&lt;version&gt;.tar.gz<br />&num; tar -xf iw_ixl-&lt;version&gt;.tar.gz</code></li>
+                <li value="2">安装基础驱动程序。例如：<br /><code>&num; cd ixl-&lt;version&gt;/src directory<br />&num; make<br />&num; make install</code></li>
+                <li value="3">安装 RDMA 驱动程序。例如：<br /><code>&num; cd iw_ixl-&lt;version&gt;/src<br />&num; make clean<br />&num; make IXL_DIR=$PATH_TO_IXL/ixl-&lt;version&gt;/src<br />&num; make install</code></li>
+                <li value="4">启用流量控制。<br /><code>&num; sysctl dev.ixl.&lt;interface_num&gt;.fc=3</code></li>
+                <li value="5">在您的系统与之连接的交换机上启用流量控制。查阅交换器文档以了解详细信息。</li>
+            </ol>
+        </div>
+        <h2>Microsoft Windows* 上的 RDMA</h2>
+        <h3>适用于网络直接 (ND) 用户模式应用程序的 RDMA</h3>
+        <p>网络直接 (ND) 允许用户模式应用程序使用 RDMA 功能。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注：</b>用户模式应用程序可能具有诸如 Microsoft HPC 包或英特尔 MPI 库之类的先决条件，请参阅应用程序文档以了解详细信息。</p>
+                </td>
+            </tr>
+        </table>
+        <h4>RDMA 用户模式安装</h4>
+        <p>英特尔&reg; 以太网用户模式 RDMA 提供程序受 Microsoft Windows Server 2012 R2 及更高版本的支持。</p>
+        <p>按照以下步骤安装用户模式网络直接功能。</p>
+        <ol>
+            <li value="1">从安装介质运行 Autorun.exe 以启动安装程序，然后选择&rdquo;安装驱动程序和软件&rdquo;，并接受许可协议。</li>
+            <li value="2">在安装选项屏幕上，选择&ldquo;英特尔&reg; 以太网用户模式 RDMA 提供程序&rdquo;。</li>
+            <li value="3">在 RDMA 配置选项屏幕上，选择&ldquo;启用跨 IP 子网的 RDMA 路由&rdquo;（如果需要）。请注意，在基础驱动程序安装过程中，即使未选择用户模式 RDMA，此选项仍会显示，因为此选项也适用于网络直接内核功能。</li>
+            <li value="4">如果 Windows 防火墙已安装，并处于活动状态，则选择&ldquo;在 Windows 防火墙中创建一条英特尔&reg; 以太网 RDMA 端口映射服务规则&rdquo;，并选择要对其应用该规则的网络。<table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td><td><p><b>注：</b>如果 Windows 防火墙被禁用，或者您使用的是第三方防火墙，您将需要手动添加此规则。</p></td></tr></table></li>
+            <li value="5">继续安装驱动程序和软件。</li>
+        </ol>
+        <h3>RDMA 网络直接内核 (NDK)</h3>
+        <p>RDMA 网络直接内核（NDK）功能包含在英特尔基础网络驱动程序中，并不需要安装额外的功能。</p>
+        <h4>跨 IP 子网的 RDMA 路由</h4>
+        <p>如果你想跨子网允许 NDK 的 RDMA 功能，您需要在基础驱动程序安装过程中在 RDMA 配置选项屏幕上选择&ldquo;启用跨 IP 子网的 RDMA 路由&rdquo;。</p>
+        <h3>在 Microsoft Windows Server 操作系统上启用优先级流量控制 (PFC)</h3>
+        <p>为避免因丢弃数据包导致的性能下降，请在所有网络接口和交换机上启用优先级流量控制 (PFC) 或链路级流量控制。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注：</b>在运行 Microsoft* Windows Server* 操作系统的系统上，启用 *QoS/优先级流控制将禁用链路级别流控制。</p>
+                </td>
+            </tr>
+        </table>
+        <p>使用以下 PowerShell* 命令在 Microsoft Windows Server 上启用 PFC：</p>
+        <p><code>Install-WindowsFeature -Name Data-Center-Bridging -IncludeManagementTools<br />New-NetQoSPolicy "SMB" -NetDirectPortMatchCondition 445 -PriorityValue8021Action 3<br />Enable-NetQosFlowControl -Priority 3<br />Disable-NetQosFlowControl -Priority 0,1,2,4,5,6,7<br />New-NetQosTrafficClass -Name "SMB" -Priority 3 -BandwidthPercentage 60 -Algorithm ETS<br />Set-NetQosDcbxSetting -Willing $FALSE<br />Enable-NetAdapterQos -Name "Slot1 4 2 Port 1"</code>
+        </p>
+        <h3>使用 Microsoft PowerShell 验证 RDMA 操作</h3>
+        <p>您可以使用以下 Microsoft PowerShell 命令检查 RDMA 是否已在网络接口中启用：</p>
+        <p><code>Get-NetAdapterRDMA</code></p>
+        <p>使用以下的 PowerShell 命令检查网络接口是否与 RDMA 兼容，以及多通道是否已启用：</p>
+        <p><code>et-SmbClientNetworkInterface</code></p>
+        <p>使用以下命令 PowerShell 命令检查网络直接是否已在操作系统中启用：</p>
+        <p><code>Get-NetOffloadGlobalSetting &verbar; 选择 NetworkDirect</code></p>
+        <p>使用 netstat 以确保每个具备 RDMA 功能的网络接口在端口 445 上有一个侦听器。（支持 RDMA 的 Windows 客户端操作系统可能不标明侦听器）。例如：</p>
+        <p><code>netstat.exe -xan &verbar; ? {$_ -match "445"}</code></p>
+        <h3>面向 Windows 虚拟环境的 RDMA</h3>
+        <p>要在连接到 VMSwitch 的虚拟适配器上启用 RDMA 功能，SRIOV（单根 IO 虚拟化）和 VMQ（虚拟机队列）高级属性必须在每个端口上启用。在某些情况下，这些设置可能会默认禁用。可以在英特尔&reg; PROSet ACU 的&ldquo;适配器设置&rdquo;面板、适配器属性对话框的&ldquo;高级&rdquo;选项卡中手动设置这些选项，或使用以下 PowerShell 命令：</p>
+        <p><code>Set-NetAdapterAdvancedProperty -Name &lt;nic_name&gt; -RegistryKeyword *SRIOV -RegistryValue 1</code></p>
+        <p><code>Set-NetAdapterAdvancedProperty -Name &lt;nic_name&gt; -RegistryKeyword *VMQ -RegistryValue 1</code></p>
+        <h3>配置 RDMA 来宾支持（NDK 模式 3）</h3>
+        <p>NDK 模式 3 允许内核模式 Windows 组件在 Hyper-V 来宾分区中使用 RDMA 功能。要在英特尔以太网设备上启用 NDK 模式 3，请执行以下操作：</p>
+        <ol>
+            <li value="1">在系统的 BIOS 或 UEFI 中启用 SR-IOV。</li>
+            <li value="2">在设备上启用 SR-IOV 高级设置。</li>
+            <li value="3">要在与设备绑定的 VMSwitch 上启用 SR-IOV，对同一个设备上的所有物理功能执行以下操作：<br /><code>New-VMSwitch -Name &lt;switch_name&gt; -NetAdapterName &lt;device_name&gt;</code><br /><code>-EnableIov $true</code></li>
+            <li value="4">通过设置&ldquo;RdmaMaxVfsEnabled&rdquo;高级设置来配置设备上的 RDMA 虚函数 (VF) 的数目。所有物理函数都必须设置为相同的值。该值是在整个设备中同一时间内具有 RDMA 能力的 VF 的最大数目。启用更多的 VF 将限制来自物理函数 (PF) 和其他 VF 的 RDMA 资源。<br /><code>Set-NetAdapterAdvancedProperty -Name &lt;device_name&gt; -RegistryKeyword RdmaMaxVfsEnabled -RegistryValue &lt;Value: 0 - 32&gt;</code></li>
+            <li value="5">禁用主机上的所有 PF 适配器并重新予以启用。对于更改注册表关键字 &ldquo;RdmaMaxVfsEnabled&rdquo;，或者创建或销毁 VMSwitch，这是必需的。<br /><code>Get-NetAdapterRdma &verbar; Disable-NetAdapter</code><br /><code>Get-NetAdapterRdma &verbar; Enable-NetAdapter</code></li>
+            <li value="6">为需要 RDMA VF 支持的 VM 创建 VM 网络适器。<br /><code>Add-VMNetworkAdapter -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -SwitchName &lt;switch_name&gt;</code></li>
+            <li value="7">如果计划在来宾分区上使用 Microsoft Windows 10 Creators Update (RS2) 或更高版本，则在主机上输入以下命令来设置 VM 网络适配器上的 RDMA 重量：<br /><code>Set-VMNetworkAdapterRdma -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -RdmaWeight 100</code></li>
+            <li value="8">在 VM 网络适配器上设置 SR-IOV 权重（注：在将 RdmaWeight 设置为 0 之前，必须先将 SR-IOV 权重设置为 0）：<br /><code>Set-VMNetworkAdapter -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -IovWeight 100</code></li>
+            <li value="9">在 VM 中使用 PROSET 安装程序安装 VF 网络适配器。</li>
+            <li value="10">使用 VM 中的 PowerShell 在 VF 驱动程序和 Hyper-V 网络适配器上启用 RDMA：<br /><code>Set-NetAdapterAdvancedProperty -Name &lt;device_name&gt; -RegistryKeyword RdmaVfEnabled -RegistryValue 1</code><br /><code>Get-NetAdapterRdma &verbar; Enable-NetAdapterRdma</code></li>
+        </ol>
+        <h3>适用于 NDK 的 RDMA 功能，如 SMB 直接（服务器消息块）等</h3>
+        <p>NDK 允许 Windows 组件（如 SMB 直接存储）使用 RDMA 功能。</p>
+        <h4>测试 NDK：带 DiskSPD 的 Microsoft Windows SMB Direct</h4>
+        <p>本节概述了我们推荐的在 Microsoft Windows 操作系统上测试适用于英特尔以太网功能和性能的 RDMA 的方法。</p>
+        <p>注：由于 SMB 直接是存储工作负载，因此基准测试的性能可能仅限于存储设备的速度，而不是被测试的网络接口。英特尔建议尽可能使用最快的存储，以对所测试的网络设备的真实功能进行测试。</p>
+        <p>测试说明：</p>
+        <ol>
+            <li value="1">设置并连接至少两台运行受支持的 Microsoft Windows Server 操作系统的服务器，且每台服务器至少有一个具备 RDMA 功能的英特尔&reg; 以太网设备。</li>
+            <li value="2">在指定为 SMB 服务器的系统上设置一个 SMB 共享。注：基准测试的性能可能仅限于存储设备的速度，而不是被测试的网络接口。存储的设置不在本文的范围之内。您可以使用以下的 PowerShell 命令：<br /><code>New-SmbShare -Name &lt;SMBsharename&gt; -Path &lt;SMBsharefilepath&gt; -FullAccess &lt;domainname&gt;\Administrator,Everyone</code><br /><br />例如：<br /><code>New-SmbShare -Name RAMDISKShare -Path R:\RAMDISK -FullAccess group\Administrator,Everyone</code><br /><br /></li>
+            <li value="3">从此处下载并安装 Diskspd Microsoft 实用程序：<a href="https://gallery.technet.microsoft.com/DiskSpd-a-robust-storage-6cd2f223">https://gallery.technet.microsoft.com/DiskSpd-a-robust-storage-6cd2f223</a></li>
+            <li value="4">使用 CMD 或 Powershell，cd 到 DiskSpd 文件夹并运行测试。（参考 Diskspd 文档以了解关于参数的更多信息）<br /><br />例如：将块大小设置为 4K，运行测试 60 秒钟，禁用所有硬件和软件缓存，测量和显示延迟统计数据，每目标利用 16 个重叠 IO 和 16 个线程，随机 0% 写入和 100% 读取，并创建一个 10GB 测试文件&ldquo;\\&lt;SMBserverTestIP&gt;\&lt;SMBsharename&gt;\test.dat&rdquo;：<br /><code>.\diskspd.exe -b4K -d60 -h -L -o16 -t16 -r -w0 -c10G \\&lt;SMBserverTestIP&gt;\&lt;SMBsharename&gt;\test.dat</code><br /><br /></li>
+            <li value="5">确认 RDMA 通信正在使用&ldquo;RDMA 活动&rdquo;和&ldquo;SMB 直接连接&rdquo;之类的性能计数器。参考 Microsoft 文档以了解更多细节。</li>
+        </ol>
+        <div>
+            <h2>客户支持</h2>
+            <ul>
+                <li value="1">英特尔的网络支持主网站：http://support.intel.com</li>
+                <li value="2">网络产品信息：http://www.intel.com/network</li>
+            </ul>
+            <h2>法律声明 / 免责声明</h2>
+            <p>版权所有 (C) 2019 - 2022，英特尔公司。保留所有权利。</p>
+            <p>英特尔公司对本文档中的错误和遗漏不负责任。英特尔公司对更新本文档中的信息不作任何承诺。</p>
+            <p>英特尔是英特尔公司在美国和/或其它国家（地区）的商标。</p>
+            <p>*文中涉及的其它名称及商标属于各自所有者资产。</p>
+            <p>本软件根据许可提供，仅允许按照许可条款使用或复制。本手册中的信息仅供参考，可能随时变更而不另行通知，并且不得将其视为英特尔公司的承诺。对于本文或提供的与本文有关的任何软件中可能出现的任何错误或不准确之处，英特尔公司概不承担任何责任或义务。除非许可证允许，在未获得英特尔公司明确的书面同意前提下，不得以任何形式或任何手段复制或传输本文档的任何部分，也不得将其存储到检索系统中。</p>
+        </div>
+    </body>
+</html>

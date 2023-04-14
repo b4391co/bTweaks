@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="ja-JP" xml:lang="ja-JP">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link href="Resources/Stylesheets/TableStyles/Basic.css" rel="stylesheet" /><title>RDMA (リモート・ダイレクト・メモリー・アクセス)</title>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <h1><a name="RDMA"></a>インテル&reg; イーサネット・デバイス用リモート・ダイレクト・メモリー・アクセス (RDMA)</h1>
+        <p>リモート・ダイレクト・メモリー・アクセス (RDMA) は、ネットワーク・デバイスが別のシステムのアプリケーション・メモリーと直接データを転送できるようにすることで、特定のネットワーク環境でスループットを向上させ、レイテンシーを短縮します。</p>
+        <ul>
+            <li value="1">インテル&reg; イーサネット 800 シリーズのデバイスは iWARP と RoCEv2 の両方をサポートします。</li>
+            <li value="2">インテル&reg; イーサネット X722 シリーズのデバイスは iWARP のみサポートします。</li>
+        </ul>
+        <p>主な違いは、iWARP は TCP で RDMA を実行し、RoCEv2 は UDP を使用することです。</p>
+        <p>パケットのドロップによるパフォーマンスの低下を防ぐには、すべてのネットワーク・インターフェイスおよびスイッチでリンクレベルのフロー制御または優先度のフロー制御を有効にします。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注:</b></p>
+                    <ul>
+                        <li value="1">Microsoft* Windows Server* オペレーティング・システムを実行しているシステムでは、*QoS / 優先度のフロー制御を有効にすると、リンクレベルのフロー制御が無効になります。</li>
+                        <li value="2">インテル&reg; イーサネット 800 シリーズベースのデバイスは、5 ポート以上のマルチポート・モードで動作している場合、RDMA をサポートしません。</li>
+                        <li value="3">Linux* システムでは、RDMA とボンディングに互換性はありません。RDMA が有効になっている場合、ボンディングは機能しません。</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <h2>Linux* での RDMA</h2>
+        <p>これらの基本的な Linux* RDMA インストール手順は、次のデバイスに適用されます。</p>
+        <ul>
+            <li value="1">インテル&reg; イーサネット 800 シリーズ</li>
+            <li value="2">インテル&reg; イーサネット X722 シリーズ</li>
+        </ul>
+        <p>インストールと設定の詳細は、RDMA 対応のインテル&reg; イーサネット・デバイス用ドライバー tarball の Linux* RDMA ドライバー README ファイルに記載されています。</p>
+        <p>この例は、Red Hat* Enterprise Linux* 特有のものです。ご利用のオペレーティング・システムによっては細部が異なる可能性があります。</p>
+        <ol>
+            <li value="1">RDMA ドライバーの tarball を展開します。例:<br /><code>&num; tar zxf irdma-&lt;x.x.x&gt;.tar.gz</code></li>
+            <li value="2">RDMA PF ドライバーをインストールします。例:<br /><code>&num; cd irdma-&lt;x.x.x&gt;<br />&num; ./build.sh<br />&num; modprobe irdma</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注:</b> デフォルトでは、irdma ドライバーは iWARP モードでロードされます。devlink インターフェイスを使用して、ポートごとに RoCEv2 を有効にします。RoCEv2 モードですべての irdma ポートをロードするには、次のようにしてください。<br /><code>&num; modprobe irdma roce_ena=1</code></td></tr></table></li>
+            <li value="3">以前インストールされたバージョンの rdma-core をアンインストールします。<br /><code>&num; yum erase rdma-core</code></li>
+            <li value="4">GitHub* から rdma-core ライブラリー tarball をダウンロードします。例:<br /><code>&num; wget https://github.com/linux-rdma/rdma-core/releases/download/v27.0/rdma-core-27.0.tar.gz</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注:</b> ドライバーに付属する libirdma パッチファイルのバージョンに一致する rdma-core バージョンをダウンロードします。例えば、<code>libirdma-27.0.patch</code> には <code>rdma-core-27.0.tar.gz</code>?????? が必要です。</td></tr></table></li>
+            <li value="5">rdma-core の tarball を展開し、パッチを適用して spec ファイルのグループを変更します。例:<br /><code>&num; tar -xzvf rdma-core-&lt;version&gt;.tar.gz<br />&num; cd rdma-core-&lt;version&gt;<br />&num; patch -p2 &lt;&lt;path-to-component-build&gt;/libirdma-&lt;version&gt;.patch<br />&num; cd ..<br />&num; chgrp -R root &lt;path-to-rdma-core&gt;/redhat<br />&num; tar -zcvf rdma-core-&lt;version&gt;.tgz rdma-core-&lt;version&gt;</code></li>
+            <li value="6">rdma-core-intel ユーザー・スペース・ライブラリーをインストールします。例:<br /><code>&num; mkdir -p ~/rpmbuild/SOURCES<br />&num; mkdir -p ~/rpmbuild/SPECS<br />&num; cp rdma-core-&lt;version&gt;.tgz ~/rpmbuild/SOURCES/<br />&num; cd ~/rpmbuild/SOURCES<br />&num; tar -xzvf rdma-core-&lt;version&gt;.tgz<br />&num; cp ~/rpmbuild/SOURCES/rdma-core-&lt;version&gt;/redhat/rdma-core.spec ~/rpmbuild/SPECS/<br />&num; cd ~/rpmbuild/SPECS/<br />&num; rpmbuild -ba rdma-core.spec<br />&num; cd ~/rpmbuild/RPMS/x86_64<br />&num; yum install *&lt;version&gt;*.rpm</code></li>
+            <li value="7">アダプターでフロー制御を有効にします。リンクレベルのフロー制御または優先度のフロー制御を有効にできますが、優先度のフロー制御を使用することを推奨します。フロー制御の詳細については、Linux* RDMA ドライバー README ファイルを参照してください。<br /></li>
+            <li value="8">システムが接続されているスイッチでフロー制御を有効にします。詳細については、スイッチのドキュメントを参照してください。</li>
+        </ol>
+        <h3>Linux の仮想環境向け RDMA</h3>
+        <p>インテル&reg; イーサネット 800 シリーズ搭載デバイスは、対応する Windows* または Linux* ホスト上で Linux* VF の RDMA をサポートします。Linux* VF で RDMA をロードおよび構成する方法の詳細については、Linux* RDMA ドライバー tarball 内の README ファイルを参照してください。</p>
+        <div>
+            <h2>FreeBSD* での RDMA</h2>
+            <p>FreeBSD* RDMA ドライバーは、次のデバイスシリーズで利用できます。</p>
+            <table style="border-left-style: solid; border-left-width: 1px; border-left-color: black; border-right-style: solid; border-right-width: 1px; border-right-color: black; border-top-style: solid; border-top-width: 1px; border-top-color: black; border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: black;" class="TableStyle-Basic" cellspacing="0">
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <col class="TableStyle-Basic-Column-Column1" />
+                <tbody>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">デバイス</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">ベースドライバー名</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyE-Column1-Body1">RDMA ドライバー名</th>
+                        <th style="font-weight: bold;" class="TableStyle-Basic-BodyD-Column1-Body1">サポートされているプロトコル</th>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">インテル&reg; イーサネット 800 シリーズ</td>
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">ice</td>
+                        <td class="TableStyle-Basic-BodyE-Column1-Body1">irdma</td>
+                        <td class="TableStyle-Basic-BodyD-Column1-Body1">RoCEv2、iWARP</td>
+                    </tr>
+                    <tr class="TableStyle-Basic-Body-Body1">
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">インテル&reg; イーサネット X722 シリーズ</td>
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">ixl</td>
+                        <td class="TableStyle-Basic-BodyB-Column1-Body1">iw_ixl</td>
+                        <td class="TableStyle-Basic-BodyA-Column1-Body1">iWARP</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>次の手順では、各デバイスシリーズにおける FreeBSD* RDMA インストールについて説明します。インストールと設定の詳細については、FreeBSD* RDMA ドライバー tarball の README ファイルを参照してください。</p>
+            <p style="font-weight: bold;">インテル&reg; イーサネット 800 シリーズ:</p>
+            <ol>
+                <li value="1">ベースドライバーと RDMA ドライバーを展開します。例:<code><br />&num; tar -xf ice-&lt;version&gt;.tar.gz<br />&num; tar -xf irdma-&lt;version&gt;.tar.gz</code></li>
+                <li value="2">ベースドライバーをインストールします。例:<br /><code>&num; cd ice-&lt;version&gt;/ directory<br />&num; make<br />&num; make install</code></li>
+                <li value="3">RDMA ドライバーをインストールします。例:<br /><code>&num; cd irdma-&lt;version&gt;/src<br />&num; make clean<br />&num; make ICE_DIR=$PATH_TO_ICE/ice-&lt;version&gt;/<br />&num; make install</code><table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17" /></td><td><b>注:</b> デフォルトでは、irdma ドライバーは iWARP モードでロードされます。RoCEv2 モードで irdma ポートをロードするには、<code>/boot/loader.conf</code> に次の行を追加します。ここで <code>&lt;port&gt;</code> は、 RoCEv2 モードを有効にするインターフェイスであり、その後再起動します。<br /><code>dev.irdma&lt;port&gt;.roce_enable=1</code><br />例えば、ice1 で RoCEv2 モードを有効にする場合:<br /><code>dev.irdma1.roce_enable=1</code></td></tr></table></li>
+                <li value="4">フロー制御を有効にします。<br /><code>&num; sysctl dev.ice.&lt;interface_num&gt;.fc=3</code></li>
+                <li value="5">システムが接続されているスイッチでフロー制御を有効にします。詳細については、スイッチのドキュメントを参照してください。</li>
+            </ol>
+            <p style="font-weight: bold;">インテル&reg; イーサネット X722 シリーズ:</p>
+            <ol>
+                <li value="1">ベースドライバーと RDMA ドライバーを展開します。例:<code><br />&num; tar -xf ixl-&lt;version&gt;.tar.gz<br />&num; tar -xf iw_ixl-&lt;version&gt;.tar.gz</code></li>
+                <li value="2">ベースドライバーをインストールします。例:<br /><code>&num; cd ixl-&lt;version&gt;/src directory<br />&num; make<br />&num; make install</code></li>
+                <li value="3">RDMA ドライバーをインストールします。例:<br /><code>&num; cd iw_ixl-&lt;version&gt;/src<br />&num; make clean<br />&num; make IXL_DIR=$PATH_TO_IXL/ixl-&lt;version&gt;/src<br />&num; make install</code></li>
+                <li value="4">フロー制御を有効にします。<br /><code>&num; sysctl dev.ixl.&lt;interface_num&gt;.fc=3</code></li>
+                <li value="5">システムが接続されているスイッチでフロー制御を有効にします。詳細については、スイッチのドキュメントを参照してください。</li>
+            </ol>
+        </div>
+        <h2>Microsoft* Windows* での RDMA</h2>
+        <h3>Network Direct (ND) 用 RDMA ユーザーモードのアプリケーション</h3>
+        <p>Network Direct (ND) はユーザーモードのアプリケーションで RDMA 機能を使用可能にします。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注:</b> ユーザーモードのアプリケーションは、Microsoft* HPC Pack またはインテル&reg; MPI ライブラリーなどで前提条件をもつことがあります。詳細については、アプリケーションのドキュメントを参照してください。</p>
+                </td>
+            </tr>
+        </table>
+        <h4>RDMA ユーザーモードのインストール</h4>
+        <p>インテル&reg; イーサネット・ユーザー・モード RDMA プロバイダーは、Microsoft* Windows Server* 2012 R2 以降でサポートされています。</p>
+        <p>ユーザーモードの Network Direct 機能をインストールするには、以下の手順に従います。</p>
+        <ol>
+            <li value="1">インストール・メディアで Autorun.exe を実行してインストーラーを起動して、[ドライバーとソフトウェアをインストールする] を選択し、ソフトウェア使用許諾契約に同意します。</li>
+            <li value="2">セットアップ・オプション画面で [インテル&reg; イーサネット・ユーザー・モード RDMA プロバイダー] を選択します。</li>
+            <li value="3">RDMA 設定オプション画面で、希望する場合は [IP サブネット全体で RDMA ルーティングを有効にする] を選択します。このオプションは、Network Direct Kernel 機能にも適用可能なため、ユーザーモード RDMA が選択されていない場合でも、ベースドライバーのインストール中にこのオプションが表示されることに注意してください。</li>
+            <li value="4">Windows* ファイアウォールがインストールされ、アクティブになっている場合は、[Windows ファイアウォールにインテル&reg; イーサネット RDMA Port Mapping Service の規則を作成する] を選択するとその規則を適用するネットワークを選択します。<table class="note"><tr><td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td><td><p><b>注:</b> Windows* ファイアウォールが無効になっている場合またはサードパーティーのファイアウォールを使用している場合は、この規則を手動で追加する必要があります。</p></td></tr></table></li>
+            <li value="5">ドライバーとソフトウェアのインストールに進みます。</li>
+        </ol>
+        <h3>RDMA Network Direct Kernel (NDK)</h3>
+        <p>RDMA Network Direct Kernel (NDK) 機能は、インテルベースのネットワーク・ドライバーに含まれており、追加機能をインストールする必要はありません。</p>
+        <h4>IP サブネット全体に渡る RDMA ルーティング</h4>
+        <p>サブネット全体に渡って NDK の RDMA 機能を許可したい場合は、ベースドライバーのインストール中に RDMA 設定オプション画面で [IP サブネット全体で RDMA ルーティングを有効にする] を選択する必要があります。</p>
+        <h3>Microsoft* Windows Server* オペレーティング・システムでの優先フロー制御 (PFC) の有効化</h3>
+        <p>パケットのドロップによるパフォーマンスの低下を防ぐには、すべてのネットワーク・インターフェイスおよびスイッチで優先フロー制御 (PFC) またはリンクレベルのフロー制御を有効にします。</p>
+        <table class="note">
+            <tr>
+                <td align="left" valign="top"><img border="0" src="note.gif" width="17" height="17"></img></td>
+                <td>
+                    <p><b>注:</b> Microsoft* Windows Server* オペレーティング・システムを実行しているシステムでは、*QoS / 優先度のフロー制御を有効にすると、リンクレベルのフロー制御が無効になります。</p>
+                </td>
+            </tr>
+        </table>
+        <p>次の PowerShell* コマンドを使用して、Microsoft* Windows Server* の PFC を有効にします。</p>
+        <p><code>Install-WindowsFeature -Name Data-Center-Bridging -IncludeManagementTools<br />New-NetQoSPolicy "SMB" -NetDirectPortMatchCondition 445 -PriorityValue8021Action 3<br />Enable-NetQosFlowControl -Priority 3<br />Disable-NetQosFlowControl -Priority 0,1,2,4,5,6,7<br />New-NetQosTrafficClass -Name "SMB" -Priority 3 -BandwidthPercentage 60 -Algorithm ETS<br />Set-NetQosDcbxSetting -Willing $FALSE<br />Enable-NetAdapterQos -Name "Slot1 4 2 Port 1"</code>
+        </p>
+        <h3>Microsoft* PowerShell* を使用した RDMA 操作の検証</h3>
+        <p>次の Microsoft* PowerShell* コマンドを使用して、ネットワーク・インターフェイスで RDMA が有効になっているか確認できます:</p>
+        <p><code>Get-NetAdapterRDMA</code></p>
+        <p>次の PowerShell* コマンドを使用して、ネットワーク・インターフェイスが RDMA 対応でありマルチチャネルが有効になっているか確認できます:</p>
+        <p><code>Get-SmbClientNetworkInterface</code></p>
+        <p>次の PowerShell* コマンドを使用して、オペレーティング・システムで Network Direct が有効になっているか確認できます:</p>
+        <p><code>Get-NetOffloadGlobalSetting &verbar; Select NetworkDirect</code></p>
+        <p>Netstat を使用して、各 RDMA 対応ネットワーク・インターフェイスのポート 445 にリスナーがあることを確認します (RDMA をサポートする Windows* クライアント OS はリスナーをポストできない場合があります)。例:</p>
+        <p><code>netstat.exe -xan &verbar; ? {$_ -match "445"}</code></p>
+        <h3>Windows* 仮想環境用の RDMA</h3>
+        <p>VMSwitch に接続されている仮想アダプターで RDMA 機能を有効にするには、各ポートで SRIOV (シングルルート IO 仮想化) および VMQ (仮想マシンキュー) の詳細プロパティーを有効にする必要があります。特定の状況の下では、これらの設定がデフォルトで無効になっていることがあります。これらのオプションは、アダプターのプロパティー・ダイアログ・ボックスの [詳細設定] タブ内にあるインテル&reg; PROSet ACU の [アダプターの設定] パネル、または次の PowerShell* コマンドを使用して手動で設定できます。</p>
+        <p><code>Set-NetAdapterAdvancedProperty -Name &lt;nic_name&gt; -RegistryKeyword *SRIOV -RegistryValue 1</code></p>
+        <p><code>Set-NetAdapterAdvancedProperty -Name &lt;nic_name&gt; -RegistryKeyword *VMQ -RegistryValue 1</code></p>
+        <h3>RDMA ゲストサポートの設定 (NDK モード 3)</h3>
+        <p>NDK モード 3 はカーネルモード Windows* コンポーネントが Hyper-V* ゲスト・パーティション内で RDMA 機能を使用できるようにします。インテル&reg; イーサネット・デバイスで NDK モード 3 を有効にするには、次の手順に従ってください:</p>
+        <ol>
+            <li value="1">システムの BIOS または UEFI で SR-IOV を有効にします。</li>
+            <li value="2">デバイスで SR-IOV 詳細設定を有効にします。</li>
+            <li value="3">同じデバイスのすべての物理関数に対して次の手順を実行して、デバイスにバインドされている VMSwitch で SR-IOV を有効にします。<br /><code>New-VMSwitch -Name &lt;switch_name&gt; -NetAdapterName &lt;device_name&gt;</code><br /><code>-EnableIov $true</code></li>
+            <li value="4">"RdmaMaxVfsEnabled" 詳細設定を設定することにより、デバイス上の RDMA 仮想関数 (VF) の数を設定します。すべての物理関数を同じ値に設定する必要があります。この値はデバイス全体で RDMA を一度に実行できる仮想関数 (VF) の最大数です。さらに多くの仮想関数 (VF) を有効にすると、物理関数 (PF) とほかの VF から RDMA リソースが制限されます。<br /><code>Set-NetAdapterAdvancedProperty -Name &lt;device_name&gt; -RegistryKeyword RdmaMaxVfsEnabled -RegistryValue &lt;Value: 0 - 32&gt;</code></li>
+            <li value="5">ホストですべての物理関数 (PF) アダプターを無効にして、それらを再度有効にします。これはレジストリーのキーワード &ldquo;RdmaMaxVfsEnabled&rdquo; が変更された場合、または VMSwitch を作成または破棄するときに必要です。<br /><code>Get-NetAdapterRdma &verbar; Disable-NetAdapter</code><br /><code>Get-NetAdapterRdma &verbar; Enable-NetAdapter</code></li>
+            <li value="6">RDMA VF サポートを必要とする仮想マシン用の VM ネットワーク・アダプターを作成します。<br /><code>Add-VMNetworkAdapter -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -SwitchName &lt;switch_name&gt;</code></li>
+            <li value="7">ゲスト・パーティションで Microsoft* Windows* 10 Creators Update (RS2) 以降を使用する予定の場合は、ホストで次のコマンドを入力して、VM ネットワーク・アダプターに RDMA のウェイトを設定してください。<br /><code>Set-VMNetworkAdapterRdma -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -RdmaWeight 100</code></li>
+            <li value="8">VM ネットワーク・アダプターで SR-IOV ウェイトを設定します (注: RDMA ウェイトを 0 に設定する前に SR-IOV ウェイトを 0 に設定する必要があります):<br /><code>Set-VMNetworkAdapter -VMName &lt;vm_name&gt; -VMNetworkAdapterName &lt;device_name&gt; -IovWeight 100</code></li>
+            <li value="9">VM の PROSET インストーラーを使用して VF ネットワーク・アダプターをインストールします。</li>
+            <li value="10">VM の PowerShell を使用して、VF ドライバーと Hyper-V ネットワーク・アダプターで RDMA を有効にします:<br /><code>Set-NetAdapterAdvancedProperty -Name &lt;device_name&gt; -RegistryKeyword RdmaVfEnabled -RegistryValue 1</code><br /><code>Get-NetAdapterRdma &verbar; Enable-NetAdapterRdma</code></li>
+        </ol>
+        <h3>SMB ダイレクト (サーバー・メッセージ・ブロック) など NDK 機能用の RDMA</h3>
+        <p>NDK は、Windows* コンポーネント (SMB ダイレクト・ストレージなど) が RDMA 機能を使用できるようにします。</p>
+        <h4>DiskSPD を使用して NDK: Microsoft* Windows* SMB ダイレクトをテストする</h4>
+        <p>このセクションでは、インテルのイーサネット機能と、Microsoft* Windows* オペレーティング・システムでのパフォーマンスを調べるために推奨される RDMA のテスト方法を説明します。</p>
+        <p>SMB ダイレクトはストレージ・ワークロードなので、ベンチマークのパフォーマンスは、テストされるネットワーク・インターフェイスではなく、ストレージデバイスの速度に制限される可能性があります。テスト中のネットワーク・デバイスの真の性能をテストするために、インテルは可能な限り最速のストレージを使用することを推奨します。</p>
+        <p>テストの手順:</p>
+        <ol>
+            <li value="1">サポートされている Microsoft* Windows Server* オペレーティング・システムを実行している少なくとも 2 台のサーバーをセットアップして、接続します。各サーバーに少なくとも 1 つの RDMA 対応インテル&reg; イーサネット・デバイスが必要です。</li>
+            <li value="2">SMB サーバーとして指定したシステムで、SMB 共有を設定します。ベンチマークのパフォーマンスは、テストされるネットワーク・インターフェイスではなく、ストレージデバイスの速度に制限される可能性があることに注意してください。ストレージのセットアップについては、本書では取り扱いません。次の PowerShell* コマンドを使用できます:<br /><code>New-SmbShare -Name &lt;SMBsharename&gt; -Path &lt;SMBsharefilepath&gt; -FullAccess &lt;domainname&gt;\Administrator,Everyone</code><br /><br />例:<br /><code>New-SmbShare -Name RAMDISKShare -Path R:\RAMDISK -FullAccess group\Administrator,Everyone</code><br /><br /></li>
+            <li value="3">次のサイトから Microsoft* ユーティリティー Diskspd をダウンロードしてインストールします: <a href="https://gallery.technet.microsoft.com/DiskSpd-a-robust-storage-6cd2f223">https://gallery.technet.microsoft.com/DiskSpd-a-robust-storage-6cd2f223</a></li>
+            <li value="4">CMD または Powershell* を利用して DiskSpd フォルダーに cd を実行し、テストを実行します。(パラメーターの詳細については、Diskspd のドキュメントを参照してください)<br /><br />例: ブロックのサイズを 4K に設定してテストを 60 秒間実行。すべてのハードウェアとソフトウェアのキャッシュを無効にし、レイテンシーの統計を測定・表示。ターゲットごとに 16 の重複した IO と 16 スレッドを活用し、ランダム 0% 書き込みおよび 100% 読み取りで 10GB テストファイルを "\\&lt;SMBserverTestIP&gt;\&lt;SMBsharename&gt;\test.dat" に作成:<br /><code>.\diskspd.exe -b4K -d60 -h -L -o16 -t16 -r -w0 -c10G \\&lt;SMBserverTestIP&gt;\&lt;SMBsharename&gt;\test.dat</code><br /><br /></li>
+            <li value="5">「RDMA Activity」や「SMB Direct Connection」などの perfmon カウンターを使用して RDMA トラフィックが実行されていることを検証します。詳細については、Microsoft* のドキュメントを参照してください。</li>
+        </ol>
+        <div>
+            <h2>カスタマーサポート</h2>
+            <ul>
+                <li value="1">インテルのサポート・ホームページ: http://www.intel.com/p/ja_JP/support</li>
+                <li value="2">ネットワーク製品情報: http://www.intel.com/network</li>
+            </ul>
+            <h2>法務情報 / 免責情報</h2>
+            <p>(C) 2019 - 2022, Intel Corporation.無断での引用、転載を禁じます。</p>
+            <p>インテルは、本書の記載内容の誤りや記入漏れについて、いっさい責任を負いません。また、その記載内容を更新することを約束するものでもありません。</p>
+            <p>Intel、インテルは、アメリカ合衆国および / またはその他の国における Intel Corporation の商標です。</p>
+            <p>* その他の社名、製品名などは、一般に各社の表示、商標または登録商標です。</p>
+            <p>本ソフトウェアはライセンスに基づいて提供されるものであり、そのライセンスの許諾範囲内でのみ使用または複製できます。本マニュアル内での情報は、あくまでも情報として提供するもので、予告なしに変更されることもあり、また、内容についても、インテルが責任を負うものではありません。本書の内容および本書の内容に関連して掲載されているソフトウェア製品の誤りに関して、インテルは一切の責任や義務を負いません。ライセンス契約で許可されている場合を除き、インテルからの書面での承諾なく、本書のいかなる部分も複製したり、検索システムに保持したり、ほかの形式や媒体によって転送したりすることは禁じられています。</p>
+        </div>
+    </body>
+</html>
